@@ -1,0 +1,38 @@
+gcloud source repos clone jpetstore --project=learncicd-287805
+
+
+===========
+
+
+Local
+
+.
+
+Inline
+
+
+steps:
+- name: maven:3.5-jdk-7-slim
+  entrypoint: 'mvn'
+  dir: '/workspace/jpetstore/'
+  args: ['clean', 'package', '-DskipTests']
+artifacts:
+  objects:
+    location: 'gs://tutorialstorage'
+    paths: '/workspace/jpetstore/target/jpetstore.war'
+=====================
+
+
+gsutil acl ch -u AllUsers:R gs://tutorialstorage/jpetstore.war
+
+/bin/sleep 10
+
+cd /home/learngcptutorial/dmscript && gcloud deployment-manager deployments create myfirstdeployment --config=createVMConfig.yaml 
+
+export ExtIP=$(gcloud compute instances describe createfirstvm --zone='us-central1-f' --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+
+echo "****External IP is  ${ExtIP}:8080***"
+
+export IntIP=$(gcloud compute instances describe createfirstvm --zone='us-central1-f' --format='get(networkInterfaces[0].networkIP)')
+
+echo "****External IP is  ${IntIP}***"
